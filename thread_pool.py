@@ -5,14 +5,19 @@ import json
 import urllib
 import sys
 import traceback
+import threadpool
+import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 has_res_count = 0
 all_count = 0
-output_path = './output.data'
+output_path = './output_multi.data'
 output_file = open(output_path, 'a+')
+error_url = './error_url.data'
+error_url_file = open(error_url, 'a+')
 spliter = '@@@'
+error_url_array = []
 
 def startRequst(url):
     print url
@@ -49,27 +54,52 @@ def parse_json_in_str(data):
     # parse json and convert everything from unicode to str
     return json.loads(data)
 
+def startRequstHandledException(url_template):
+    try:
+        startRequst(url_template)
+    except BaseException:
+        global all_count
+        all_count -= 1
+        print 'url_template has a problem:' + url_template
+        error_url_array.append(url_template)
+        traceback.print_exc()
+
 if __name__ == "__main__":
-    config_path = './input.data'
+    config_path = './input_multi.data'
     config = {}
-    arr = []
+    data_array = []
+    star_time = time.time()
     with open(config_path, 'rb') as f:
         while True:
             line = f.readline().decode('utf8')
             if line:
-                arr.append(line)
+                data_array.append(line)
             else:
                 break
-    for item in arr:
+
+    url_arr = []
+    for item in data_array:
         query2scene_key = item.split('sk_tuihuoyunfei')
-        title = urllib.quote(query2scene_key[0].encode('utf8'))
+        query = urllib.quote(query2scene_key[0].encode('utf8'))
         #seller_id = title2seller[1]
-        url_template = 'https://xxxx/intention.htm?q=%s'%(title)
-        try:
-            startRequst(url_template)
-        except BaseException:
-            print 'url_template has a problem:' + url_template
-            traceback.print_exc()
+        url_template = 'https://xxx/intention.htm?q=%s'%(query)
+        url_arr.append(url_template)
+
+    pool = threadpool.ThreadPool(8 + 2)
+    requests = threadpool.makeRequests(startRequstHandledException, url_arr)
+    [pool.putRequest(req) for req in requests]
+    pool.wait()
+    print '%d second'%(time.time() -star_time)
+    print 'error url array start'
+
+    #记录异常的请求
+    error_url_str = ''
+    for error_url in error_url_array:
+        error_url_str = error_url_str + '\n' + error_url
+        #startRequstHandledException(error_url)
+    error_url_file.write(error_url_str)
+    error_url_file.close()
 
     output_file.write('test res:' +  str(has_res_count) + '/' +  str(all_count))
+    output_file.close()
     print 'test res:' +  str(has_res_count) + '/' +  str(all_count)

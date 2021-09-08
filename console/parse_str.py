@@ -7,8 +7,8 @@ def parse():
 
 def printArray(array):
     print 'userId:' + array[0]
-    print 'traceId:' + array[3]
-    print 'classifySceneKey:' + array[16]
+    print 'traceId:' + array[1]
+    print 'classifySceneKey:' + array[2]
 
 if __name__ == "__main__":
     print 'please input str:'

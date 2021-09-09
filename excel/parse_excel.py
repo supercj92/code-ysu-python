@@ -13,13 +13,11 @@ import openpyxl
 #         print(d)
 
 def load_data_from_excel(path):
-
     wb = openpyxl.load_workbook(path)
     sheet = wb['Sheet1']
     query = []
-
-    for item in list(sheet.rows)[1:]:
-        query.append(item[0].value)
+    for row in list(sheet.rows)[1:]:
+        query.append(row[0].value)
 
     wb.close()
     return query

@@ -52,13 +52,16 @@ def parse_json_in_str(data):
     # parse json and convert everything from unicode to str
     return json.loads(data)
 
-
 def classify_queries(query_array):
     classify_result = []
     for query in query_array:
-        encoded_query = urllib.quote(query.encode('utf8'))
+        try:
+            encoded_query = urllib.quote(query.encode('utf8'))
+        except BaseException:
+            print 'query %s exception' % (query)
         # seller_id = title2seller[1]
         url_template = 'https://alibee-shop.taobao.org/alibee/intention.htm?q=%s' % (encoded_query)
+        request_result = {}
         try:
             request_result = classify_query(url_template)
             classify_result.append(request_result)
@@ -67,8 +70,9 @@ def classify_queries(query_array):
             traceback.print_exc()
     return classify_result
 
+
 def classify_query(url):
-    print url
+    #print url
     global all_count
     all_count += 1
     req = urllib2.Request(url)
@@ -82,8 +86,8 @@ def classify_query(url):
 
     request_result = {}
     if jsonObj:
-        request_result = {'question': str(jsonObj.get('question')), 'scene': str(str(jsonObj.get('sceneKey'))),
-                          'package_common': str(str(jsonObj.get('package_common')))}
+        request_result = {'question': str(jsonObj.get('question')), 'scene': str(jsonObj.get('sceneKey')),
+                          'packName': str(jsonObj.get('packName'))}
 
     return request_result
 

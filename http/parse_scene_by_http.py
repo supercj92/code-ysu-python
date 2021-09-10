@@ -60,7 +60,7 @@ def classify_queries(query_array):
         except BaseException:
             print 'query %s exception' % (query)
         # seller_id = title2seller[1]
-        url_template = 'https://alibee-shop.taobao.org/alibee/intention.htm?q=%s' % (encoded_query)
+        url_template = 'xxx/intention.htm?q=%s' % (encoded_query)
         request_result = {}
         try:
             request_result = classify_query(url_template)

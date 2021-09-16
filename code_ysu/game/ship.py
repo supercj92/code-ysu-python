@@ -8,7 +8,7 @@ class Ship:
 
     def __init__(self, screen, game_config):
         self.screen = screen
-        self.ship_img = pygame.image.load('./resources/ship.bmp')
+        self.ship_img = pygame.image.load('resources/ship.bmp')
         self.ship_rect = self.ship_img.get_rect()
         self.screen_rect = screen.get_rect()
         self.center_ship()

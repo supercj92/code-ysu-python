@@ -16,7 +16,7 @@ def parse_scene_in_multi_thread_mode(queries):
         for query in queries:
             try:
                 count += 1
-                url_template = 'https://alibee-shop.taobao.org/alibee/intention.htm?q=%s' % parse.quote(
+                url_template = 'https://xxxxx/intention.htm?q=%s' % parse.quote(
                     str(query).encode('utf8'))
                 future = executor.submit(classify_query, url_template)
                 futures.append(future)
